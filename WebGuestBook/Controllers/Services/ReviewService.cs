@@ -1,27 +1,22 @@
-using Microsoft.EntityFrameworkCore;
-using WebGuestBook.Data;
-using WebGuestBook.Models;
 using WebGuestBook.Models.Review;
-using WebGuestBook.Models.User;
+using WebGuestBook.Repositories;
 
-namespace WebGuestBook.Services;
-
+namespace WebGuestBook.Services
+{
     public class ReviewService
     {
-        private readonly UserContext _db;
+        private readonly IReviewRepository _reviewRepository;
 
-        public ReviewService(UserContext db)
+        public ReviewService(IReviewRepository reviewRepository)
         {
-            _db = db;
+            _reviewRepository = reviewRepository;
         }
-        
+
         public async Task<List<Review>> GetAllReviewsAsync()
         {
-            return await _db.Reviews
-                .OrderByDescending(r => r.Date)
-                .ToListAsync();
+            return await _reviewRepository.GetAllAsync();
         }
-        
+
         public async Task AddReviewAsync(int userId, string authorName, string message)
         {
             var review = new Review
@@ -32,7 +27,8 @@ namespace WebGuestBook.Services;
                 Date = DateTime.UtcNow
             };
 
-            _db.Reviews.Add(review);
-            await _db.SaveChangesAsync();
+            await _reviewRepository.AddAsync(review);
+            await _reviewRepository.SaveChangesAsync();
         }
     }
+}

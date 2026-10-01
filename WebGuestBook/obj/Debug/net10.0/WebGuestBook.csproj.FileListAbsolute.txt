@@ -128,3 +128,4 @@
 /Users/f1opl/RiderProjects/WebGuestBook/WebGuestBook/obj/Debug/net10.0/WebGuestBook.pdb
 /Users/f1opl/RiderProjects/WebGuestBook/WebGuestBook/obj/Debug/net10.0/WebGuestBook.genruntimeconfig.cache
 /Users/f1opl/RiderProjects/WebGuestBook/WebGuestBook/obj/Debug/net10.0/ref/WebGuestBook.dll
+/Users/f1opl/RiderProjects/WebGuestBook/WebGuestBook/obj/Debug/net10.0/WebGuestBook.sourcelink.json

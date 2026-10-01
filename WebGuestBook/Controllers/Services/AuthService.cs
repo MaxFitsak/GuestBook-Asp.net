@@ -1,30 +1,30 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity; 
-using Microsoft.EntityFrameworkCore;
-using WebGuestBook.Data;
-using WebGuestBook.Models;
+using Microsoft.AspNetCore.Identity;
 using WebGuestBook.Models.User;
+using WebGuestBook.Repositories;
 
 namespace WebGuestBook.Services
 {
     public class AuthService
     {
-        private readonly UserContext _db;
+        private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly PasswordHasher<User> _hasher = new();
 
-        public AuthService(UserContext db, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
-            _db = db;
+            _userRepository = userRepository;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         public async Task<bool> Register(string email, string password, string firstName, string lastName)
         {
-            bool exists = await _db.Users.AnyAsync(u => u.Email == email);
-            if (exists) return false;
+            if (await _userRepository.ExistsByEmailAsync(email))
+            {
+                return false;
+            }
 
             var user = new User
             {
@@ -33,28 +33,34 @@ namespace WebGuestBook.Services
                 LastName = lastName,
                 Password = string.Empty
             };
-            
+
             user.Password = _hasher.HashPassword(user, password);
 
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
-            
-            await SignInUser(user);
-            return true;
-        }
-        
-        public async Task<bool> Login(string email, string password)
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null) return false;
-            
-            var verifyResult = _hasher.VerifyHashedPassword(user, user.Password, password);
-            if (verifyResult == PasswordVerificationResult.Failed) return false;
+            await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
 
             await SignInUser(user);
             return true;
         }
-        
+
+        public async Task<bool> Login(string email, string password)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null || string.IsNullOrEmpty(user.Password))
+            {
+                return false;
+            }
+
+            var verifyResult = _hasher.VerifyHashedPassword(user, user.Password, password);
+            if (verifyResult == PasswordVerificationResult.Failed)
+            {
+                return false;
+            }
+
+            await SignInUser(user);
+            return true;
+        }
+
         public async Task Logout()
         {
             var httpContext = _httpContextAccessor.HttpContext;
@@ -63,7 +69,7 @@ namespace WebGuestBook.Services
                 await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             }
         }
-        
+
         private async Task SignInUser(User user)
         {
             var claims = new List<Claim>
