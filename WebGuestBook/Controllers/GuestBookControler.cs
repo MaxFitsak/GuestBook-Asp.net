@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebGuestBook.Models.Review;
 using WebGuestBook.Services;
 
 namespace WebGuestBook.Controllers
@@ -26,22 +27,28 @@ namespace WebGuestBook.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddReview(string message)
+        public async Task<IActionResult> AddReview(Review review)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (idClaim == null || !int.TryParse(idClaim.Value, out int userId))
             {
                 return Challenge();
             }
-
-            string authorName = User.Identity?.Name ?? "Користувач";
             
-            await _reviewService.AddReviewAsync(userId, authorName, message);
+            review.UserId = userId;
+            review.Author = User.Identity?.Name ?? "Користувач";
+            review.Date = DateTime.UtcNow;
+            
+            ModelState.Remove(nameof(review.Author));
+            ModelState.Remove(nameof(review.User));
+
+            if (!ModelState.IsValid)
+            {
+                var reviews = await _reviewService.GetAllReviewsAsync();
+                return View("Index", reviews);
+            }
+
+            await _reviewService.AddReviewAsync(review.UserId, review.Author, review.Message);
 
             return RedirectToAction(nameof(Index));
         }

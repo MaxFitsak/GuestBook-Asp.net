@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/../APS.NetFilms" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core-MVC.-Filtration.-Soccer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core-MVC.-Layered-architecture.-Soccer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core.-Combining-sorting-filtering-and-pagination" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core.-MVC.-Metadata-and-model-validation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core.-MVC.-Metadata-and-model-validation.-Soccer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core.-SignalR_Chat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ASP.NET-Core.-Web-API-NET9" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../FIlmsRazorPages" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../MaksymMusic" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../RulimAuto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+  </component>
+</project>
